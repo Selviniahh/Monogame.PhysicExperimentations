@@ -110,19 +110,17 @@ public class UserInterface
                 CreateCheckBox(ref Circle.Options.Gravity, "Gravity", "Options", "Gravity", "if disabled, the circle will float in the game window");
 
                 //If SlideOff enabled, disable the RealisticBounce checkbox
-                if (Circle.Gravity.SlideOff || Circle.Gravity.SimpleBounce) ImGui.BeginDisabled(true);
+                if (Circle.Gravity.SimpleBounce) ImGui.BeginDisabled(true);
                 CreateCheckBox(ref Circle.Gravity.RealisticBounce, "RealisticBounce", "Gravity", "Realistic Bounce", "Use reflection vector to bounce off from overlapped circle rather than invert the direction");
-                if (Circle.Gravity.SlideOff || Circle.Gravity.SimpleBounce) ImGui.EndDisabled();
+                if ( Circle.Gravity.SimpleBounce) ImGui.EndDisabled();
 
                 // If RealisticBounce or SlideOff is enabled, disable the SimpleBounce checkbox
-                if (Circle.Gravity.RealisticBounce || Circle.Gravity.SlideOff) ImGui.BeginDisabled(true);
+                if (Circle.Gravity.RealisticBounce) ImGui.BeginDisabled(true);
                 CreateCheckBox(ref Circle.Gravity.SimpleBounce, "SimpleBounce", "Gravity", "Unrealistic Bounce", "Invert the direction when overlapped");
-                if (Circle.Gravity.RealisticBounce || Circle.Gravity.SlideOff) ImGui.EndDisabled();
+                if (Circle.Gravity.RealisticBounce) ImGui.EndDisabled();
                 
                 // If RealisticBounce is enabled, disable the SlideOff checkbox
-                if (Circle.Gravity.RealisticBounce || Circle.Gravity.SimpleBounce) ImGui.BeginDisabled(true);
                 CreateCheckBox(ref Circle.Gravity.SlideOff, "SlideOff", "Gravity", "Slide Off and Push", "Slide off from overlapped circle");
-                if (Circle.Gravity.RealisticBounce || Circle.Gravity.SimpleBounce) ImGui.EndDisabled();
 
 
                 CreateInputFloat(ref Circle.Gravity.Velocity, "Velocity", "Gravity", "Gravity Velocity", "Velocity of the gravity");

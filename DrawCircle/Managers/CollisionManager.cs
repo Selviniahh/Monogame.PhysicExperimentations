@@ -53,14 +53,14 @@ public class CollisionManager
         // Calculate the vector between the centers of the circles
         Vector2 delta = b1.Position - b2.Position;
 
+        // Normalize the delta vector
+        Vector2 direction = Vector2.Normalize(delta);
+        
         // Calculate the distance between the circles
         float distance = delta.Length();
 
         // Calculate the amount of overlap between the circles so we can send them opposite direction just enough to resolve collision
         float overlap = b1.Origin.X + b2.Origin.X - distance;
-
-        // Normalize the delta vector
-        Vector2 direction = Vector2.Normalize(delta);
 
         if (b1.Gravity.SlideOff || b1.Gravity.RealisticBounce || b2.Gravity.SlideOff || b2.Gravity.RealisticBounce)
         {
@@ -77,8 +77,7 @@ public class CollisionManager
         {
             b1.Gravity.Direction = Vector2.Reflect(b1.Gravity.Direction, direction);
         }
-
-
+        
         if (b2.Gravity.SimpleBounce)
         {
             b2.Gravity.Direction = -b2.Gravity.Direction;

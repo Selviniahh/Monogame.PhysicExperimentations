@@ -241,11 +241,17 @@ namespace DrawCircle.Circle
         {
             Position += Gravity.Direction * Gravity.Velocity * Globals.TotalSeconds * Options.VelocityMultiplyer;
 
-            if (Position.X - Origin.X < 0 || Position.X > Globals.Bounds.X - Origin.X - Globals.UISize.X)
-                Gravity.Direction = new Vector2(-Gravity.Direction.X, Gravity.Direction.Y); //Position.X < Origin.X || 
+            if (IsPositionOverlappingWindowBounds(Position.X, Origin.X, Globals.Bounds.X, Globals.UISize.X))
+                Gravity.Direction = new Vector2(-Gravity.Direction.X, Gravity.Direction.Y); //position.X < Origin.X || 
 
-            if (Position.Y - Origin.Y < 0 || Position.Y > Globals.Bounds.Y - Origin.Y - Globals.UISize.Y)
-                Gravity.Direction = new Vector2(Gravity.Direction.X, -Gravity.Direction.Y); //Position.Y < Origin.Y || 
+            if (IsPositionOverlappingWindowBounds(Position.Y,Origin.Y,Globals.Bounds.Y,Globals.UISize.Y))
+                Gravity.Direction = new Vector2(Gravity.Direction.X, -Gravity.Direction.Y); //position.Y < Origin.Y || 
+        }
+
+        
+        public bool IsPositionOverlappingWindowBounds(float position, float origin, int bounds, int uiSize)
+        {
+            return position - origin < 0 || position > bounds - origin - uiSize;
         }
 
         private void UpdatePositionHistory()

@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoveCirclerAroundCenter", "MoveCirclerAroundCenter\MoveCirclerAroundCenter.csproj", "{E755DDB8-00B3-495D-8A9B-147946344C27}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrawCircle", "DrawCircle\DrawCircle.csproj", "{FA286BE0-BF36-401D-8434-E8C5EB00EB18}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E755DDB8-00B3-495D-8A9B-147946344C27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E755DDB8-00B3-495D-8A9B-147946344C27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E755DDB8-00B3-495D-8A9B-147946344C27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E755DDB8-00B3-495D-8A9B-147946344C27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA286BE0-BF36-401D-8434-E8C5EB00EB18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA286BE0-BF36-401D-8434-E8C5EB00EB18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA286BE0-BF36-401D-8434-E8C5EB00EB18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA286BE0-BF36-401D-8434-E8C5EB00EB18}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

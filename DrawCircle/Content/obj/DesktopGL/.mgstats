@@ -1,0 +1,3 @@
+Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"C:/Users/xqwys/RiderProjects/Fluid/DrawCircle/Content/File.spritefont","C:/Users/xqwys/RiderProjects/Fluid/DrawCircle/Content/bin/DesktopGL/font.xnb","FontDescriptionProcessor","SpriteFontContent",2068,21535,0.1666541
+"C:/Users/xqwys/RiderProjects/Fluid/DrawCircle/Content/orb-blue.png","C:/Users/xqwys/RiderProjects/Fluid/DrawCircle/Content/bin/DesktopGL/orb-blue.xnb","TextureProcessor","Texture2DContent",6535,11321,0.009403

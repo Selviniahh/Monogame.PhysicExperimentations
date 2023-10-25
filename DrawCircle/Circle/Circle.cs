@@ -36,9 +36,7 @@ namespace DrawCircle.Circle
         public bool IsSimpleHarmonicMotion;
         public bool Gravity;
         public bool MakeCounterClockwise;
-        
         public float VelocityMultiplyer;
-
     }
 
     public struct CircularMovement
@@ -85,21 +83,20 @@ namespace DrawCircle.Circle
 
     public class Circle
     {
-        public readonly Texture2D Texture;
-        public Vector2 Position;
-        public readonly string Name;
-        public bool IsSelected { get; set; }
-        public Rectangle Bounds => new Rectangle((int)(Position.X - Origin.X), (int)(Position.Y - Origin.Y), Texture.Width, Texture.Height);
-        public readonly SpriteFont Font;
-        private readonly List<Vector2> _positionHistory = new List<Vector2>();
-        
-        
-
         public SimpleHarmonicMotion Shm;
         public Options Options;
         public Gravity Gravity;
         public OscillatingMotion OscillatingMotion;
         public CircularMovement CircularMovement;
+        
+        public readonly Texture2D Texture;
+        public Vector2 Position;
+        public readonly string Name;
+        public bool IsBeingDragged { get; set; }
+        public bool IsSelected { get; set; }
+        public Rectangle Bounds => new Rectangle((int)(Position.X - Origin.X), (int)(Position.Y - Origin.Y), Texture.Width, Texture.Height);
+        public readonly SpriteFont Font;
+        private readonly List<Vector2> _positionHistory = new List<Vector2>();
         public Vector2 Origin { get; set; }
         private float Angle { get; set; } = 0.0f; // keep track of the angle for the circle
         private Color Color { get; set; }
@@ -116,7 +113,7 @@ namespace DrawCircle.Circle
             Font = font;
             Name = name;
             Origin = new Vector2((float)texture.Width / 2, (float)texture.Height / 2);
-            Position = new Vector2(Globals.Bounds.X / 2.0f, Globals.Bounds.Y / 2.0f);
+            Position = new Vector2(Globals.GameBounds.X / 2.0f, Globals.GameBounds.Y / 2.0f);
             Color = Color.White;
             Angle += Options.VelocityMultiplyer;
             _maxHistoryPosCount = 1000;
@@ -145,7 +142,7 @@ namespace DrawCircle.Circle
         public void Update(GameTime gameTime)
         {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
+            
             UpdateVelocityMultiplyer();
             
             UpdateMovements(deltaTime);
@@ -211,8 +208,8 @@ namespace DrawCircle.Circle
         private void UpdateCircularMovement(float deltaTime)
         {
             // Calculate the center of the screen
-            float centerX = Globals.Bounds.X / 2.0f;
-            float centerY = Globals.Bounds.Y / 2.0f;
+            float centerX = Globals.GameBounds.X / 2.0f;
+            float centerY = Globals.GameBounds.Y / 2.0f;
             // Movements
 
             Angle += Options.VelocityMultiplyer * CircularMovement.Velocity * deltaTime;
@@ -241,11 +238,15 @@ namespace DrawCircle.Circle
         {
             Position += Gravity.Direction * Gravity.Velocity * Globals.TotalSeconds * Options.VelocityMultiplyer;
 
-            if (IsPositionOverlappingWindowBounds(Position.X, Origin.X, Globals.Bounds.X, Globals.UISize.X))
+            if (IsPositionOverlappingWindowBounds(Position.X, Origin.X, Globals.GameBounds.X, Globals.UISize.X))
+            {
                 Gravity.Direction = new Vector2(-Gravity.Direction.X, Gravity.Direction.Y); //position.X < Origin.X || 
+            }
 
-            if (IsPositionOverlappingWindowBounds(Position.Y,Origin.Y,Globals.Bounds.Y,Globals.UISize.Y))
+            if (IsPositionOverlappingWindowBounds(Position.Y, Origin.Y, Globals.GameBounds.Y, Globals.UISize.Y))
+            {
                 Gravity.Direction = new Vector2(Gravity.Direction.X, -Gravity.Direction.Y); //position.Y < Origin.Y || 
+            }
         }
 
         
@@ -253,6 +254,14 @@ namespace DrawCircle.Circle
         {
             return position - origin < 0 || position > bounds - origin - uiSize;
         }
+        public bool IsAllPositionOverlappingWindowBounds(Vector2 position, Vector2 origin)
+        {
+            var bounds = Globals.GameBounds;
+            var uiSize = Globals.UISize;
+            return (position.X - origin.X < 0 || position.X > bounds.X - origin.X - uiSize.X) ||
+                   (position.Y - origin.Y < 0 || position.Y > bounds.Y - origin.Y - uiSize.Y);
+        }
+
 
         private void UpdatePositionHistory()
         {
@@ -279,7 +288,7 @@ namespace DrawCircle.Circle
 
         private void DrawSinCos()
         {
-            string sinAndCos = "Cos " + ((Position.X - Globals.Bounds.X / 2.0f) / CircularMovement.Radius).ToString("N2") + " Sin " + ((Position.Y - Globals.Bounds.Y / 2.0f) / CircularMovement.Radius).ToString("N2");
+            string sinAndCos = "Cos " + ((Position.X - Globals.GameBounds.X / 2.0f) / CircularMovement.Radius).ToString("N2") + " Sin " + ((Position.Y - Globals.GameBounds.Y / 2.0f) / CircularMovement.Radius).ToString("N2");
             Vector2 stringSize = Font.MeasureString(sinAndCos);
             Vector2 stringPosition = new Vector2(Position.X - stringSize.X / 2, Position.Y - Origin.Y - 25 - stringSize.Y / 2);
 
@@ -298,7 +307,7 @@ namespace DrawCircle.Circle
         private void DrawCenterPointAndThread()
         {
             //Draw Center Point
-            var centerPosition = new Vector2((float)Globals.Bounds.X / 2, (float)Globals.Bounds.Y / 2);
+            var centerPosition = new Vector2((float)Globals.GameBounds.X / 2, (float)Globals.GameBounds.Y / 2);
             Globals.SpriteBatch.Draw(Texture, centerPosition, null, Color.Red, 0, Origin, 0.2f, SpriteEffects.None, 1); // Scaled down
 
             // Draw line from center to circle

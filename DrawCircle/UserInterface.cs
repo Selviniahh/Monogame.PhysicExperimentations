@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Numerics;
 using System.Reflection;
+using DrawCircle.Managers;
 using Fluid;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
@@ -14,16 +15,16 @@ namespace DrawCircle;
 public class UserInterface
 {
     private Circle.Circle Circle { get; set; }
+    private DrawingManager Drawing { get; set; }
     private bool _clearTrace = true;
     public event Action OnNewCircleNeeded;
-
     public delegate void ChangeAction(Circle.Circle circle);
-
     public event Action<ChangeAction> ChangeForAllCirclesRequired;
 
-    public UserInterface(Circle.Circle circle)
+    public UserInterface(Circle.Circle circle, DrawingManager drawing)
     {
         Circle = circle;
+        Drawing = drawing;
     }
     
     public void Update(Circle.Circle selectedCircle)
@@ -34,8 +35,8 @@ public class UserInterface
     public void Render(Circle.Circle selectedCircle)
     {
         Circle = selectedCircle;
-        Num.Vector2 pos = new Num.Vector2(Globals.Bounds.X - Globals.UISize.X, 0);
-        Num.Vector2 size = new Num.Vector2(Globals.UISize.X, Globals.Bounds.Y);
+        Num.Vector2 pos = new Num.Vector2(Globals.GameBounds.X - Globals.UISize.X, 0);
+        Num.Vector2 size = new Num.Vector2(Globals.UISize.X, Globals.GameBounds.Y);
         ImGui.SetNextWindowPos(pos);
         ImGui.SetNextWindowSize(size);
         ImGui.Begin("Main Dock space", ImGuiWindowFlags.DockNodeHost | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.AlwaysAutoResize);
@@ -55,6 +56,7 @@ public class UserInterface
                 }
 
                 CreateInputFloat(ref Circle.Options.VelocityMultiplyer, "VelocityMultiplyer","Options", "VelocityMultiplyer", "VelocityMultiplyer for SHM");
+                CreateInputFloat(ref CollisionManager.CollisionSettings.CollisionMultiplyer, "CollisionMultiplyer","CollisionSettings", "CollisionMultiplyer", "CollisionMultiplyer for SHM");
                 CreateCheckBox(ref Circle.Options.MakeCounterClockwise, "MakeCounterClockwise", "Options", "CounterClockWise", "Invert the direction of the circle");
                 
                 // CreateInputFloat(ref Globals.Fps, "Frame per second", "Frame per second");
@@ -121,11 +123,16 @@ public class UserInterface
                 
                 // If RealisticBounce is enabled, disable the SlideOff checkbox
                 CreateCheckBox(ref Circle.Gravity.SlideOff, "SlideOff", "Gravity", "Slide Off and Push", "Slide off from overlapped circle");
-
-
                 CreateInputFloat(ref Circle.Gravity.Velocity, "Velocity", "Gravity", "Gravity Velocity", "Velocity of the gravity");
+                CreateInputVector(ref Circle.Gravity.Direction, "GravityDirection", "GravityDirection", "Direction", "GravityDirection");
                 
                 ImGui.EndTabItem();
+            }
+
+            if (ImGui.BeginTabItem("Drawing"))
+            {
+                CreateCheckBox(ref Drawing.DrawingEnabled,"Drawing","Nothing","Drawing", "Enable drawing");
+                CreateInputFloat(ref Drawing.Scale, "Scale", "Drawing", "Scale", "Scale");
             }
             ImGui.EndTabBar();
         }
@@ -149,6 +156,29 @@ public class UserInterface
             }
         }
     }
+    private void CreateInputVector(ref Vector2 option, string fieldName, string structName, string label, string tooltip)
+    {
+        var vector = new Num.Vector2(option.X,option.Y);
+        
+        ImGui.Text(label);
+        if (ImGui.IsItemHovered()) ImGui.SetTooltip(tooltip); 
+        ImGui.SameLine();
+        if (ImGui.InputFloat2("##" + label, ref vector))
+        {
+            if (InputManager.EnterClicked)
+            {
+                option = new Vector2(vector.X, vector.Y);
+                Circle.HandleTrace(ref _clearTrace);
+            }
+            
+            if (InputManager.WasCtrlHolding(3))
+            {
+                ImGui.SameLine();
+                Debug.WriteLine("Apply to all");
+                MakeFieldChangesForAllCircles(option, fieldName, structName);
+            }
+        }
+    }
 
     private void CreateCheckBox(ref bool option, string fieldName, string structName, string label, string tooltip)
     {
@@ -168,13 +198,17 @@ public class UserInterface
 
     private void CreateInputFloat(ref float option, string fieldName, string structName, string label, string tooltip)
     {
+        float givenFloat = option; 
         ImGui.Text(label);
         if (ImGui.IsItemHovered()) ImGui.SetTooltip(tooltip);
         ImGui.SameLine();
-        if (ImGui.InputFloat("##" + label, ref option))
+        if (ImGui.InputFloat("##" + label, ref givenFloat))
         {
-            Circle.HandleTrace(ref _clearTrace);
-            
+            if (InputManager.EnterClicked)
+            {
+                option = givenFloat;
+                Circle.HandleTrace(ref _clearTrace);
+            }            
             if (InputManager.WasCtrlHolding(3))
             {
                 ImGui.SameLine();

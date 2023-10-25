@@ -22,11 +22,11 @@ public class Game1 : Game
     {
         Globals.Fps = 144;
         Globals.UISize = new Point(250, 0);
-        Globals.Bounds = new Point(1020, 720);
-        Globals.TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 60.0);
+        Globals.GameBounds = new Point(1020, 720);
+        Globals.TargetElapsedTime = TimeSpan.FromSeconds(1.0 / Globals.Fps);
         Globals.GraphicsDevice = GraphicsDevice;
-        _graphics.PreferredBackBufferWidth = Globals.Bounds.X;
-        _graphics.PreferredBackBufferHeight = Globals.Bounds.Y;
+        _graphics.PreferredBackBufferWidth = Globals.GameBounds.X;
+        _graphics.PreferredBackBufferHeight = Globals.GameBounds.Y;
         _graphics.ApplyChanges();
 
         
@@ -43,7 +43,7 @@ public class Game1 : Game
     {
         _graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
         _graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
-        Globals.Bounds = new Point(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
+        Globals.GameBounds = new Point(_graphics.PreferredBackBufferWidth, _graphics.PreferredBackBufferHeight);
         _graphics.ApplyChanges();
     }
 
@@ -73,7 +73,7 @@ public class Game1 : Game
         _gameManager.Draw();
         _spriteBatch.End();
         
-        _gameManager.DrawUI(gameTime);
+        _gameManager.DrawUi(gameTime);
         base.Draw(gameTime);
     }
 }
